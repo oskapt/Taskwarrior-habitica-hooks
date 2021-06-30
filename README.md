@@ -42,7 +42,7 @@ To keep from polluting the local system, this application runs as an unprivilege
 
 ## Usage
 
-Use `task add`, `task edit`, and `task delete`. Only new tasks will be added to Habitica.
+Use `task add`, `task edit`, `task done`, and `task delete`. Only new tasks will be added to Habitica.
 
 ## Removing the Hooks
 
@@ -53,7 +53,7 @@ Use `task add`, `task edit`, and `task delete`. Only new tasks will be added to 
     rm -fr ~/.task/hooks/task2hab
     ```
 
-2. Delete the container
+2. Delete the container image
 
     ```bash
     docker rmi monachus/task2hab:latest
