@@ -26,6 +26,7 @@ for arg in sys.argv:
 # Define constants to avoid magic values
 COMMAND_ADD = 'add'
 COMMAND_MODIFY = 'edit'
+COMMAND_NEXT = 'next'
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -46,6 +47,11 @@ TASK_STATUS_DELETED = 'deleted'
 
 API_USER = getenv('API_USER')
 API_KEY = getenv('API_KEY')
+
+try:
+    DEBUG = bool(int(getenv('TASK_DEBUG', 0)))
+except ValueError:
+    DEBUG = False
 
 headers = {
     'Content-Type': 'application/json',
@@ -83,6 +89,12 @@ class TaskException(Exception):
 
         return "Error: {}".format(msg)
 
+def log(data):
+    '''
+    Print data to stderr
+    '''
+
+    print(data, file=sys.stderr)
 
 def pushTask(task):
     values = {
@@ -142,38 +154,39 @@ def edit_task(task):
     id = pushTask(task)
 
 def main():
-    task = None
-    if command == COMMAND_ADD:
+    if DEBUG:
+        log(sys.argv)
+
+    task = original_task = json.loads(sys.stdin.readline())
+    try:
         task = json.loads(sys.stdin.readline())
+    except json.decoder.JSONDecodeError:
+        # there was only one task
+        pass
+    response = None
+
+    if command == COMMAND_ADD or TASK_HABITICA_ID not in task:
         add_task(task)
         if TASK_HABITICA_ID in task:
-            print("Added task to Habitica")
+            response = "Added task to Habitica"
         else:
-            print("Failed to add task to Habitica, yet without error")
+            response = "Failed to add task to Habitica, yet without error"
 
-        print(json.dumps(task))
-    else:
-        # Assumed anything not add is modification
-        # Save original task first
-        _ = json.loads(sys.stdin.readline())
-        task = json.loads(sys.stdin.readline())
-
-        if TASK_HABITICA_ID not in task:
-            print(json.dumps(task))
-            print("Task not present on Habitica. Ignoring.")
-            return
-        elif command == COMMAND_MODIFY:
+    if TASK_HABITICA_ID in task and command != COMMAND_ADD:
+        if command == COMMAND_MODIFY:
             edit_task(task)
-            print(json.dumps(task))
-            print("Task edited on Habitica")
+            response = "Task edited on Habitica"
         elif task[TASK_KEY_STATUS] == TASK_STATUS_COMPLETED:
             complete_task(task)
-            print(json.dumps(task))
-            print("Task completed on Habitica")
+            response = "Task completed on Habitica"
         elif task[TASK_KEY_STATUS] == TASK_STATUS_DELETED:
             delete_task(task)
-            print(json.dumps(task))
-            print("Task deleted on Habitica")
+            response = "Task deleted on Habitica"
+
+    print(json.dumps(task))
+
+    if response:
+        print(response)
 
 def complete_task(task):
     try:

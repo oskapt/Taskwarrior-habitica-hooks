@@ -7,6 +7,9 @@ TASK=$(</dev/stdin)
 KEY_KEY=habitica.api_key
 USER_KEY=habitica.api_user
 
+# Set this to 1 to enable debug output from the hook
+DEBUG=0
+
 for arg in "$@"; do
   echo $arg | grep -qE "^rc:"
   if [[ $? -eq 0 ]]; then
@@ -29,4 +32,4 @@ if [[ -z $API_USER || -z $API_KEY ]]; then
   exit 1
 fi
 
-echo "$TASK" | docker run -i -e API_USER=$API_USER -e API_KEY=$API_KEY $IMAGE $@
+echo "$TASK" | docker run -i -e TASK_DEBUG=$DEBUG -e API_USER=$API_USER -e API_KEY=$API_KEY $IMAGE $@
