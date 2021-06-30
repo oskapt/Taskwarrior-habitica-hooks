@@ -42,7 +42,7 @@ To keep from polluting the local system, this application runs as an unprivilege
 
 ## Usage
 
-Use `task add`, `task edit`, `task done`, and `task delete`. Only new tasks will be added to Habitica.
+Use `task add`, `task edit`, `task done`, and `task delete`. If you have existing tasks in Taskwarrior that aren't in Habitica, they will be added to Habitica when you first interact with the task.
 
 ## Removing the Hooks
 
