@@ -27,6 +27,7 @@ for arg in sys.argv:
 COMMAND_ADD = 'add'
 COMMAND_MODIFY = 'edit'
 COMMAND_NEXT = 'next'
+COMMAND_DELETE = 'delete'
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -163,30 +164,30 @@ def main():
     except json.decoder.JSONDecodeError:
         # there was only one task
         pass
-    response = None
+    response = []
 
-    if command == COMMAND_ADD or TASK_HABITICA_ID not in task:
+    if command == COMMAND_ADD or (TASK_HABITICA_ID not in task and command != COMMAND_DELETE):
         add_task(task)
         if TASK_HABITICA_ID in task:
-            response = "Added task to Habitica"
+            response.append("Added task to Habitica")
         else:
-            response = "Failed to add task to Habitica, yet without error"
+            response.append("Failed to add task to Habitica, yet without error")
 
     if TASK_HABITICA_ID in task and command != COMMAND_ADD:
         if command == COMMAND_MODIFY:
             edit_task(task)
-            response = "Task edited on Habitica"
+            response.append("Task edited on Habitica")
         elif task[TASK_KEY_STATUS] == TASK_STATUS_COMPLETED:
             complete_task(task)
-            response = "Task completed on Habitica"
+            response.append("Task completed on Habitica")
         elif task[TASK_KEY_STATUS] == TASK_STATUS_DELETED:
             delete_task(task)
-            response = "Task deleted on Habitica"
+            response.append("Task deleted on Habitica")
 
     print(json.dumps(task))
 
     if response:
-        print(response)
+        print('\n'.join(response))
 
 def complete_task(task):
     try:
