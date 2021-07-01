@@ -25,7 +25,8 @@ for arg in sys.argv:
 
 # Define constants to avoid magic values
 COMMAND_ADD = 'add'
-COMMAND_MODIFY = 'edit'
+COMMAND_MODIFY = 'modify'
+COMMAND_EDIT = 'edit'
 COMMAND_NEXT = 'next'
 COMMAND_DELETE = 'delete'
 
@@ -173,7 +174,7 @@ def main():
             response.append("Failed to add task to Habitica, yet without error")
 
     if TASK_HABITICA_ID in task and command != COMMAND_ADD:
-        if command == COMMAND_MODIFY:
+        if command == COMMAND_MODIFY or command == COMMAND_EDIT:
             edit_task(task)
             response.append("Task edited on Habitica")
         elif task[TASK_KEY_STATUS] == TASK_STATUS_COMPLETED:
