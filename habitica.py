@@ -145,7 +145,6 @@ def pushTask(task):
     except requests.ConnectionError:
         raise TaskException(connection=True)
 
-
 def add_task(task):
     id = pushTask(task)
     if id:
@@ -188,6 +187,9 @@ def main():
 
     if response:
         print('\n'.join(response))
+
+    if DEBUG:
+        log(task)
 
 def complete_task(task):
     try:
